@@ -148,6 +148,7 @@ fn handle_install(args: Vec<String>) {
                 String::from(path_split[0]),
                 String::from("/"),
                 String::from(path_split[1]),
+                String::from("/"),
                 String::from(path_split[2]),
             ]
             .concat(),
@@ -199,6 +200,8 @@ fn handle_init(args: Vec<String>) {
             String::from(path_split[0]),
             String::from("/"),
             String::from(path_split[1]),
+            String::from("/"),
+            String::from(path_split[2]),
         ]
         .concat(),
     ); // Make rust dir
@@ -220,6 +223,7 @@ fn handle_init(args: Vec<String>) {
                 String::from(path_split[0]),
                 String::from("/"),
                 String::from(path_split[1]),
+                String::from("/"),
                 String::from(path_split[2]),
             ]
             .concat(),
