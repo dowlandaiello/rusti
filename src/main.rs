@@ -1,5 +1,10 @@
 use std::env; // Allow env variables
+use std::ffi::OsString; // Allow os string
+use std::fs; // Allow filesystem
+use std::path::PathBuf; // Allow path buffers
 use std::process::Command; // Allow cmd
+
+extern crate dirs; // Import dirs package
 
 // main is the entry-point for the rust utility.
 fn main() {
@@ -16,6 +21,7 @@ fn main() {
 
     match action.as_ref() {
         "run" => handle_run(),           // Run
+        "get" => handle_get(args),       // Get
         _ => println!("invalid action"), // Default
     } // Handle different actions
 }
@@ -25,4 +31,66 @@ fn handle_run() {
     let output = Command::new("cargo").arg("run").output().expect(""); // Build cargo
 
     println!("{}", String::from_utf8_lossy(&output.stdout)); // Log build
+}
+
+// handle_get handles the get command.
+fn handle_get(args: Vec<String>) {
+    let home_dir: Option<PathBuf> = dirs::home_dir(); // Get home dir
+
+    let mut home_dir_str: String; // Init home dir buffer
+
+    let path_split: Vec<&str> = args[2].split("/").collect(); // Split path
+
+    match home_dir {
+        Some(x) => {
+            let home_dir_str_temp = x.into_os_string().into_string();
+            match home_dir_str_temp {
+                Ok(v) => home_dir_str = v,
+                _ => {
+                    println!("failed"); // Log fail
+
+                    return; // Stop execution
+                }
+            }
+        } // Set home dir str val
+        None => {
+            println!("could not get home directory"); // Log failure
+
+            return; // Stop execution
+        } // Stop execution
+    } // Get option value
+
+    fs::create_dir_all(
+        &[
+            home_dir_str,
+            String::from("/rust/src/"),
+            String::from(path_split[0]),
+            String::from(path_split[1]),
+        ]
+        .concat(),
+    ); // Make rust dir
+
+    let output = Command::new("git").arg("clone").arg(
+        &[
+            String::from("https://"),
+            args[2].to_string(),
+            String::from(".git"),
+        ]
+        .concat(),
+    ); // Get
+
+    output.current_dir(
+        &[
+            home_dir_str,
+            String::from("/rust/src/"),
+            String::from(path_split[0]),
+            String::from(path_split[1]),
+        ]
+        .concat(),
+    ); // Set working dir
+
+    println!(
+        "{}",
+        String::from_utf8_lossy(&output.output().expect("").stdout)
+    ); // Log output
 }
