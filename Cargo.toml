@@ -1,6 +1,6 @@
 [package]
 name = "rusti"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Dowland Aiello <mitsukomegumii@gmail.com>"]
 edition = "2018"
 description = "A simple go-style utility for downloading, installing, and running rust programs."
