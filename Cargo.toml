@@ -3,6 +3,10 @@ name = "rust"
 version = "0.1.0"
 authors = ["Dowland Aiello <mitsukomegumii@gmail.com>"]
 edition = "2018"
+description = "A simple go-style utility for downloading, installing, and running rust programs."
+license = "MIT"
+homepage = "https://github.com/dowlandaiello/rust"
+repository = "https://github.com/dowlandaiello/rust"
 
 [dependencies]
 dirs = "1.0"
