@@ -23,6 +23,7 @@ fn main() {
         "run" => handle_run(),             // Run
         "get" => handle_get(args),         // Get
         "install" => handle_install(args), // Install
+        "build" => handle_build(),         // Build
         _ => println!("invalid action"),   // Default
     } // Handle different actions
 }
@@ -108,14 +109,56 @@ fn handle_get(args: Vec<String>) {
 
 // handle_install handles the install command.
 fn handle_install(args: Vec<String>) {
-    handle_get(args); // Get package
+    handle_get(args.to_owned()); // Get package
+
+    let home_dir: Option<PathBuf> = dirs::home_dir(); // Get home dir
+
+    let mut home_dir_str: String; // Init home dir buffer
+
+    let path_split: Vec<&str> = args[2].split("/").collect(); // Split path
+
+    match home_dir {
+        Some(x) => {
+            let home_dir_str_temp = x.into_os_string().into_string();
+            match home_dir_str_temp {
+                Ok(v) => home_dir_str = v,
+                _ => {
+                    println!("failed"); // Log fail
+
+                    return; // Stop execution
+                }
+            }
+        } // Set home dir str val
+        None => {
+            println!("could not get home directory"); // Log failure
+
+            return; // Stop execution
+        } // Stop execution
+    } // Get option value
 
     let output = Command::new("cargo")
         .arg("install")
         .arg("--path")
         .arg(".")
+        .current_dir(
+            &[
+                home_dir_str,
+                String::from("/rust/src/"),
+                String::from(path_split[0]),
+                String::from("/"),
+                String::from(path_split[1]),
+            ]
+            .concat(),
+        )
         .output()
         .expect(""); // install
+
+    println!("{}", String::from_utf8_lossy(&output.stdout)); // Log output
+}
+
+// handle_build handles the build command.
+fn handle_build() {
+    let output = Command::new("cargo").arg("build").output().expect(""); // install
 
     println!("{}", String::from_utf8_lossy(&output.stdout)); // Log output
 }
