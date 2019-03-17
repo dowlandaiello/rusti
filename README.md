@@ -45,3 +45,15 @@ rusti run
 ```zsh
 rusti build
 ```
+
+### Create a new Package
+
+```zsh
+rusti init package_url
+```
+
+Example:
+
+```zsh
+rusti init github.com/dowlandaiello/rusti
+```
