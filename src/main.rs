@@ -1,5 +1,5 @@
 use std::env; // Allow env variables
-use std::ffi::OsString; // Allow os string
+use std::error::Error; // Allow errors
 use std::fs; // Allow filesystem
 use std::path::PathBuf; // Allow path buffers
 use std::process::Command; // Allow cmd
@@ -60,37 +60,47 @@ fn handle_get(args: Vec<String>) {
         } // Stop execution
     } // Get option value
 
-    fs::create_dir_all(
+    let result = fs::create_dir_all(
         &[
-            home_dir_str,
+            home_dir_str.to_string(),
             String::from("/rust/src/"),
             String::from(path_split[0]),
+            String::from("/"),
             String::from(path_split[1]),
         ]
         .concat(),
     ); // Make rust dir
 
-    let output = Command::new("git").arg("clone").arg(
-        &[
-            String::from("https://"),
-            args[2].to_string(),
-            String::from(".git"),
-        ]
-        .concat(),
-    ); // Get
+    match result {
+        Ok(_v) => {}
+        Err(e) => {
+            println!("{}", e.description());
+            return;
+        } // Handle err
+    }
 
-    output.current_dir(
-        &[
-            home_dir_str,
-            String::from("/rust/src/"),
-            String::from(path_split[0]),
-            String::from(path_split[1]),
-        ]
-        .concat(),
-    ); // Set working dir
+    let output = Command::new("git")
+        .arg("clone")
+        .arg(
+            &[
+                String::from("https://"),
+                args[2].to_string(),
+                String::from(".git"),
+            ]
+            .concat(),
+        )
+        .current_dir(
+            &[
+                home_dir_str,
+                String::from("/rust/src/"),
+                String::from(path_split[0]),
+                String::from("/"),
+                String::from(path_split[1]),
+            ]
+            .concat(),
+        )
+        .output()
+        .expect(""); // Get
 
-    println!(
-        "{}",
-        String::from_utf8_lossy(&output.output().expect("").stdout)
-    ); // Log output
+    println!("{}", String::from_utf8_lossy(&output.stdout)); // Log output
 }
