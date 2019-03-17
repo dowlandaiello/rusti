@@ -219,6 +219,7 @@ fn handle_init(args: Vec<String>) {
                 String::from(path_split[0]),
                 String::from("/"),
                 String::from(path_split[1]),
+                String::from(path_split[2]),
             ]
             .concat(),
         )
