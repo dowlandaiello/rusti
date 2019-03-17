@@ -20,9 +20,10 @@ fn main() {
     let action = &args[1]; // Get action
 
     match action.as_ref() {
-        "run" => handle_run(),           // Run
-        "get" => handle_get(args),       // Get
-        _ => println!("invalid action"), // Default
+        "run" => handle_run(),             // Run
+        "get" => handle_get(args),         // Get
+        "install" => handle_install(args), // Install
+        _ => println!("invalid action"),   // Default
     } // Handle different actions
 }
 
@@ -101,6 +102,20 @@ fn handle_get(args: Vec<String>) {
         )
         .output()
         .expect(""); // Get
+
+    println!("{}", String::from_utf8_lossy(&output.stdout)); // Log output
+}
+
+// handle_install handles the install command.
+fn handle_install(args: Vec<String>) {
+    handle_get(args); // Get package
+
+    let output = Command::new("cargo")
+        .arg("install")
+        .arg("--path")
+        .arg(".")
+        .output()
+        .expect(""); // install
 
     println!("{}", String::from_utf8_lossy(&output.stdout)); // Log output
 }
