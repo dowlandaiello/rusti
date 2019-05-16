@@ -1,6 +1,6 @@
 # rusti
 
-A simple go-style utility for downloading, installing, and running rust programs.
+The gopath, but for rust.
 
 ## Installation
 
